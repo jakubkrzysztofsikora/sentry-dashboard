@@ -1,0 +1,42 @@
+{
+  "lastUpdated": "2025-01-09T12:00:00Z",
+  "sentryOrg": "circit-ltd",
+  "metrics": {
+    "slowestQuery": "14.49s",
+    "totalSlowQueries": 4799,
+    "p95ResponseTime": "45.2ms",
+    "averageSlowQueryTime": "7.1s"
+  },
+  "githubRepo": "sentry-dashboard",
+  "herokuApp": "sentry-db-perf-dashboard",
+  "updateFrequency": "hourly",
+  "criticalThreshold": 10000,
+  "warningThreshold": 5000,
+  "topQueries": [
+    {
+      "name": "SELECT with Multiple Subqueries",
+      "avgTime": 14.49,
+      "severity": "critical"
+    },
+    {
+      "name": "Complex Request Collection Query",
+      "avgTime": 11.52,
+      "severity": "critical"
+    },
+    {
+      "name": "Database Constraint Operations",
+      "avgTime": 7.80,
+      "severity": "warning"
+    },
+    {
+      "name": "PBC Message Counter Query",
+      "avgTime": 5.37,
+      "severity": "warning"
+    },
+    {
+      "name": "Audit Item Exception Query",
+      "avgTime": 4.80,
+      "severity": "slow"
+    }
+  ]
+}
