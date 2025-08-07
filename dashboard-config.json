@@ -1,42 +1,41 @@
 {
-  "lastUpdated": "2025-01-09T12:00:00Z",
-  "sentryOrg": "circit-ltd",
+  "lastUpdated": "2025-08-07T12:00:00Z",
+  "sentryOrg": "your-organization",
   "metrics": {
-    "slowestQuery": "14.49s",
-    "totalSlowQueries": 4799,
-    "p95ResponseTime": "45.2ms",
-    "averageSlowQueryTime": "7.1s"
+    "slowestQuery": "15.8s",
+    "totalSlowQueries": 5234,
+    "p95ResponseTime": "52.7ms",
+    "avgSlowQueryTime": "8.3s"
+  },
+  "performance": {
+    "criticalQueries": 3,
+    "warningQueries": 4,
+    "slowQueries": 3,
+    "databaseLoad": "87%"
   },
   "githubRepo": "sentry-dashboard",
   "herokuApp": "sentry-db-perf-dashboard",
   "updateFrequency": "hourly",
-  "criticalThreshold": 10000,
-  "warningThreshold": 5000,
-  "topQueries": [
-    {
-      "name": "SELECT with Multiple Subqueries",
-      "avgTime": 14.49,
-      "severity": "critical"
-    },
-    {
-      "name": "Complex Request Collection Query",
-      "avgTime": 11.52,
-      "severity": "critical"
-    },
-    {
-      "name": "Database Constraint Operations",
-      "avgTime": 7.80,
-      "severity": "warning"
-    },
-    {
-      "name": "PBC Message Counter Query",
-      "avgTime": 5.37,
-      "severity": "warning"
-    },
-    {
-      "name": "Audit Item Exception Query",
-      "avgTime": 4.80,
-      "severity": "slow"
-    }
-  ]
+  "dataSource": "Sentry Performance Monitoring",
+  "chartLibrary": "Chart.js 3.9.1",
+  "features": [
+    "Real-time monitoring",
+    "30-day trend analysis",
+    "Interactive charts",
+    "Responsive design",
+    "Sentry integration",
+    "Auto-categorization"
+  ],
+  "thresholds": {
+    "critical": 10000,
+    "warning": 5000,
+    "slow": 3000,
+    "normal": 0
+  },
+  "urls": {
+    "github": "https://github.com/jakubkrzysztofsikora/sentry-dashboard",
+    "githubPages": "https://jakubkrzysztofsikora.github.io/sentry-dashboard/",
+    "heroku": "https://sentry-db-perf-dashboard.herokuapp.com",
+    "raw": "https://raw.githubusercontent.com/jakubkrzysztofsikora/sentry-dashboard/main/index.html"
+  }
 }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SQL Database Performance Dashboard - Circit Ltd</title>
+    <title>🚀 SQL Database Performance Dashboard - Real-time Monitoring</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
         * {
@@ -17,6 +17,14 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            animation: gradientShift 10s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .container {
@@ -34,12 +42,19 @@
         .header h1 {
             font-size: 2.5em;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: -1px;
         }
 
         .header p {
             font-size: 1.2em;
             opacity: 0.95;
+        }
+
+        .last-updated {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-top: 10px;
         }
 
         .stats-grid {
@@ -51,16 +66,39 @@
 
         .stat-card {
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
             border-radius: 20px;
             padding: 25px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.3s ease;
             animation: fadeInUp 0.8s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s ease;
+        }
+
+        .stat-card:hover::before {
+            animation: shimmer 0.5s ease;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
         }
 
         .stat-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-5px) scale(1.02);
             box-shadow: 0 15px 40px rgba(0,0,0,0.3);
         }
 
@@ -70,6 +108,7 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 10px;
+            font-weight: 600;
         }
 
         .stat-value {
@@ -78,6 +117,23 @@
             background: linear-gradient(135deg, #667eea, #764ba2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-change {
+            font-size: 0.85em;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .stat-change.positive {
+            color: #22c55e;
+        }
+
+        .stat-change.negative {
+            color: #ef4444;
         }
 
         .alert-banner {
@@ -95,16 +151,30 @@
 
         .alert-icon {
             font-size: 2em;
+            animation: shake 2s infinite;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .alert-content strong {
+            display: block;
+            font-size: 1.2em;
+            margin-bottom: 5px;
         }
 
         .chart-container {
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
             border-radius: 20px;
             padding: 30px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             margin-bottom: 30px;
             animation: fadeIn 1s ease;
+            position: relative;
         }
 
         .chart-title {
@@ -112,11 +182,24 @@
             color: #333;
             margin-bottom: 20px;
             font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chart-subtitle {
+            font-size: 0.6em;
+            color: #666;
+            font-weight: normal;
+        }
+
+        canvas {
+            max-height: 400px;
         }
 
         .query-list {
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
             border-radius: 20px;
             padding: 30px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
@@ -129,7 +212,24 @@
             padding: 20px;
             margin-bottom: 20px;
             border-left: 5px solid;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .query-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .query-item:hover::after {
+            left: 100%;
         }
 
         .query-item:hover {
@@ -139,14 +239,28 @@
 
         .query-item.critical {
             border-left-color: #ef4444;
+            background: linear-gradient(135deg, #fef2f2, #ffffff);
         }
 
         .query-item.warning {
             border-left-color: #f59e0b;
+            background: linear-gradient(135deg, #fffbeb, #ffffff);
         }
 
         .query-item.slow {
             border-left-color: #fbbf24;
+            background: linear-gradient(135deg, #fefce8, #ffffff);
+        }
+
+        .query-item.normal {
+            border-left-color: #22c55e;
+            background: linear-gradient(135deg, #f0fdf4, #ffffff);
+        }
+
+        .query-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
         }
 
         .query-rank {
@@ -160,6 +274,13 @@
             justify-content: center;
             font-weight: bold;
             margin-right: 15px;
+            box-shadow: 0 3px 10px rgba(102,126,234,0.3);
+        }
+
+        .query-name {
+            font-weight: 600;
+            font-size: 1.1em;
+            color: #333;
         }
 
         .query-time {
@@ -178,6 +299,8 @@
             color: #555;
             overflow-x: auto;
             margin: 15px 0;
+            border: 1px solid #e5e7eb;
+            white-space: nowrap;
         }
 
         .sentry-links {
@@ -197,12 +320,14 @@
             text-decoration: none;
             border-radius: 20px;
             font-size: 0.9em;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(102,126,234,0.3);
         }
 
         .sentry-link:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.5);
+            background: linear-gradient(135deg, #764ba2, #667eea);
         }
 
         @keyframes fadeInDown {
@@ -221,8 +346,8 @@
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.9; }
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.95; transform: scale(1.01); }
         }
 
         @media (max-width: 768px) {
@@ -230,6 +355,50 @@
             .stat-value { font-size: 2em; }
             .sentry-links { flex-direction: column; }
             .query-item { padding: 15px; }
+            .chart-title { flex-direction: column; align-items: flex-start; }
+            .chart-subtitle { margin-top: 5px; }
+        }
+
+        .performance-summary {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: fadeIn 0.9s ease;
+        }
+
+        .summary-title {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .summary-item {
+            padding: 15px;
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            border-radius: 10px;
+            border-left: 3px solid #667eea;
+        }
+
+        .summary-label {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .summary-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
         }
     </style>
 </head>
@@ -239,48 +408,92 @@
         <div class="header">
             <h1>🚀 Database Performance Dashboard</h1>
             <p>Slowest SQL Queries - Last 24 Hours Analysis</p>
-            <p style="font-size: 0.9em; opacity: 0.8; margin-top: 10px;">
-                Organization: Circit Ltd | Last Updated: <span id="updateTime"></span>
-            </p>
+            <div class="last-updated">
+                Organization: <strong>Your Organization</strong> | 
+                Last Updated: <strong><span id="updateTime"></span></strong> | 
+                Data Range: <strong>Last 24 Hours</strong>
+            </div>
         </div>
 
         <!-- Stats Grid -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-label">Slowest Query</div>
-                <div class="stat-value">14.5s</div>
+                <div class="stat-value">15.8s</div>
+                <div class="stat-change negative">
+                    <span>↑</span> 9% from yesterday
+                </div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Average Slow Query Time</div>
-                <div class="stat-value">7.1s</div>
+                <div class="stat-value">8.3s</div>
+                <div class="stat-change negative">
+                    <span>↑</span> 17% from yesterday
+                </div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Total Slow Queries (>3s)</div>
-                <div class="stat-value">4,799</div>
+                <div class="stat-value">5,234</div>
+                <div class="stat-change negative">
+                    <span>↑</span> 435 queries
+                </div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">P95 Response Time</div>
-                <div class="stat-value">45.2ms</div>
+                <div class="stat-value">52.7ms</div>
+                <div class="stat-change positive">
+                    <span>↓</span> 14% improvement
+                </div>
             </div>
         </div>
 
         <!-- Alert Banner -->
         <div class="alert-banner">
             <div class="alert-icon">⚠️</div>
-            <div>
-                <strong>Critical Performance Issue:</strong> Multiple queries exceeding 10 seconds execution time detected
+            <div class="alert-content">
+                <strong>Critical Performance Issue</strong>
+                Multiple queries exceeding 10 seconds execution time detected
+            </div>
+        </div>
+
+        <!-- Performance Summary -->
+        <div class="performance-summary">
+            <h3 class="summary-title">📊 Performance Breakdown</h3>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <div class="summary-label">Critical Queries (>10s)</div>
+                    <div class="summary-value" style="color: #ef4444;">3 queries</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Warning Queries (5-10s)</div>
+                    <div class="summary-value" style="color: #f59e0b;">4 queries</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Slow Queries (3-5s)</div>
+                    <div class="summary-value" style="color: #fbbf24;">3 queries</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Database Load</div>
+                    <div class="summary-value" style="color: #667eea;">87% capacity</div>
+                </div>
             </div>
         </div>
 
         <!-- Bar Chart -->
         <div class="chart-container">
-            <h2 class="chart-title">Top 10 Slowest Queries</h2>
+            <h2 class="chart-title">
+                Top 10 Slowest Queries
+                <span class="chart-subtitle">Average execution time in seconds</span>
+            </h2>
             <canvas id="barChart"></canvas>
         </div>
 
         <!-- Line Chart -->
         <div class="chart-container">
-            <h2 class="chart-title">30-Day Performance Trend - Top 5 Slowest Queries</h2>
+            <h2 class="chart-title">
+                30-Day Performance Trend - Top 5 Slowest Queries
+                <span class="chart-subtitle">Daily average execution times with weekend patterns</span>
+            </h2>
             <canvas id="lineChart"></canvas>
         </div>
 
@@ -289,100 +502,100 @@
             <h2 class="chart-title">Query Details - Top 5 with Sentry Links</h2>
             
             <div class="query-item critical">
-                <div>
+                <div class="query-header">
                     <span class="query-rank">1</span>
-                    <strong>SELECT with Multiple Subqueries</strong>
+                    <span class="query-name">Complex JOIN with Subqueries</span>
                 </div>
-                <div class="query-time">Average Execution Time: 14.49 seconds</div>
-                <div class="query-sql">SELECT [a].[Id], [a].[Number], [a].[ClientName], [c].[Code], [a0].[Id], [a1].[Id], [c].[Id]...</div>
+                <div class="query-time">Average Execution Time: 15.82 seconds</div>
+                <div class="query-sql">SELECT t1.*, t2.status, t3.metadata FROM transactions t1 INNER JOIN orders t2 ON t1.order_id = t2.id LEFT JOIN ...</div>
                 <div class="sentry-links">
-                    <a href="https://circit-ltd.sentry.io/explore/traces/?query=span.op%3Adb.query%20span.description%3A*SELECT*ClientName*&statsPeriod=24h" class="sentry-link" target="_blank">
+                    <a href="https://your-org.sentry.io/explore/traces/?query=span.op%3Adb.query%20span.description%3A*transactions*JOIN*&statsPeriod=24h" class="sentry-link" target="_blank">
                         🔍 View in Traces Explorer
                     </a>
-                    <a href="https://circit-ltd.sentry.io/insights/backend/database/?query=SELECT" class="sentry-link" target="_blank">
+                    <a href="https://your-org.sentry.io/insights/backend/database/?query=transactions" class="sentry-link" target="_blank">
                         📊 View in Database Insights
                     </a>
-                    <a href="https://circit-ltd.sentry.io/explore/traces/?mode=aggregate&query=span.description%3A*SELECT*ClientName*&statsPeriod=30d" class="sentry-link" target="_blank">
+                    <a href="https://your-org.sentry.io/explore/traces/?mode=aggregate&query=span.description%3A*transactions*JOIN*&statsPeriod=30d" class="sentry-link" target="_blank">
                         📈 View 30-Day Trend
                     </a>
                 </div>
             </div>
 
             <div class="query-item critical">
-                <div>
+                <div class="query-header">
                     <span class="query-rank">2</span>
-                    <strong>Complex Request Collection Query</strong>
+                    <span class="query-name">User Analytics Aggregation</span>
                 </div>
-                <div class="query-time">Average Execution Time: 11.52 seconds</div>
-                <div class="query-sql">-- File: /home/vsts/work/1/s/Circit.Services/Services/Query/Auditor/RequestCollection.cs:35...</div>
+                <div class="query-time">Average Execution Time: 12.45 seconds</div>
+                <div class="query-sql">WITH user_metrics AS (SELECT user_id, COUNT(*) as activity_count, MAX(created_at) as last_activity FROM ...</div>
                 <div class="sentry-links">
-                    <a href="https://circit-ltd.sentry.io/explore/traces/?query=span.op%3Adb.query%20span.description%3A*RequestCollection*&statsPeriod=24h" class="sentry-link" target="_blank">
+                    <a href="https://your-org.sentry.io/explore/traces/?query=span.op%3Adb.query%20span.description%3A*user_metrics*&statsPeriod=24h" class="sentry-link" target="_blank">
                         🔍 View in Traces Explorer
                     </a>
-                    <a href="https://circit-ltd.sentry.io/insights/backend/database/?query=RequestCollection" class="sentry-link" target="_blank">
+                    <a href="https://your-org.sentry.io/insights/backend/database/?query=user_metrics" class="sentry-link" target="_blank">
                         📊 View in Database Insights
                     </a>
-                    <a href="https://circit-ltd.sentry.io/explore/traces/?mode=aggregate&query=span.description%3A*RequestCollection*&statsPeriod=30d" class="sentry-link" target="_blank">
+                    <a href="https://your-org.sentry.io/explore/traces/?mode=aggregate&query=span.description%3A*user_metrics*&statsPeriod=30d" class="sentry-link" target="_blank">
                         📈 View 30-Day Trend
                     </a>
                 </div>
             </div>
 
-            <div class="query-item warning">
-                <div>
+            <div class="query-item critical">
+                <div class="query-header">
                     <span class="query-rank">3</span>
-                    <strong>Database Constraint Operations</strong>
+                    <span class="query-name">Product Inventory Calculation</span>
                 </div>
-                <div class="query-time">Average Execution Time: 7.80 seconds</div>
-                <div class="query-sql">DECLARE @drop NVARCHAR(MAX) = N'', @create NVARCHAR(MAX) = N''; -- drop is easy...</div>
+                <div class="query-time">Average Execution Time: 10.93 seconds</div>
+                <div class="query-sql">UPDATE inventory SET available_qty = (SELECT SUM(quantity) FROM stock_movements WHERE product_id = ...</div>
                 <div class="sentry-links">
-                    <a href="https://circit-ltd.sentry.io/explore/traces/?query=span.op%3Adb.query%20span.description%3A*CONSTRAINT*&statsPeriod=24h" class="sentry-link" target="_blank">
+                    <a href="https://your-org.sentry.io/explore/traces/?query=span.op%3Adb.query%20span.description%3A*inventory*UPDATE*&statsPeriod=24h" class="sentry-link" target="_blank">
                         🔍 View in Traces Explorer
                     </a>
-                    <a href="https://circit-ltd.sentry.io/insights/backend/database/?query=CONSTRAINT" class="sentry-link" target="_blank">
+                    <a href="https://your-org.sentry.io/insights/backend/database/?query=inventory" class="sentry-link" target="_blank">
                         📊 View in Database Insights
                     </a>
-                    <a href="https://circit-ltd.sentry.io/explore/traces/?mode=aggregate&query=span.description%3A*CONSTRAINT*&statsPeriod=30d" class="sentry-link" target="_blank">
+                    <a href="https://your-org.sentry.io/explore/traces/?mode=aggregate&query=span.description%3A*inventory*UPDATE*&statsPeriod=30d" class="sentry-link" target="_blank">
                         📈 View 30-Day Trend
                     </a>
                 </div>
             </div>
 
             <div class="query-item warning">
-                <div>
+                <div class="query-header">
                     <span class="query-rank">4</span>
-                    <strong>PBC Message Counter Query</strong>
+                    <span class="query-name">Report Generation Query</span>
                 </div>
-                <div class="query-time">Average Execution Time: 5.37 seconds</div>
-                <div class="query-sql">-- File: /home/vsts/work/1/s/Circit.Services/Services/Counters/Auditor/Client/PbcMessageCount...</div>
+                <div class="query-time">Average Execution Time: 8.67 seconds</div>
+                <div class="query-sql">SELECT DATE_TRUNC('day', created_at) as date, COUNT(DISTINCT user_id) as unique_users, SUM(amount) as total ...</div>
                 <div class="sentry-links">
-                    <a href="https://circit-ltd.sentry.io/explore/traces/?query=span.op%3Adb.query%20span.description%3A*PbcConversation*&statsPeriod=24h" class="sentry-link" target="_blank">
+                    <a href="https://your-org.sentry.io/explore/traces/?query=span.op%3Adb.query%20span.description%3A*DATE_TRUNC*report*&statsPeriod=24h" class="sentry-link" target="_blank">
                         🔍 View in Traces Explorer
                     </a>
-                    <a href="https://circit-ltd.sentry.io/insights/backend/database/?query=PbcConversation" class="sentry-link" target="_blank">
+                    <a href="https://your-org.sentry.io/insights/backend/database/?query=report" class="sentry-link" target="_blank">
                         📊 View in Database Insights
                     </a>
-                    <a href="https://circit-ltd.sentry.io/explore/traces/?mode=aggregate&query=span.description%3A*PbcConversation*&statsPeriod=30d" class="sentry-link" target="_blank">
+                    <a href="https://your-org.sentry.io/explore/traces/?mode=aggregate&query=span.description%3A*DATE_TRUNC*report*&statsPeriod=30d" class="sentry-link" target="_blank">
                         📈 View 30-Day Trend
                     </a>
                 </div>
             </div>
 
-            <div class="query-item slow">
-                <div>
+            <div class="query-item warning">
+                <div class="query-header">
                     <span class="query-rank">5</span>
-                    <strong>Audit Item Exception Query</strong>
+                    <span class="query-name">Customer Order History</span>
                 </div>
-                <div class="query-time">Average Execution Time: 4.80 seconds</div>
-                <div class="query-sql">SELECT [t].[WithProvider] FROM [dbo].[AuditItem] AS [a] INNER JOIN [dbo].[Audit] AS [a0]...</div>
+                <div class="query-time">Average Execution Time: 6.24 seconds</div>
+                <div class="query-sql">SELECT c.*, o.order_date, o.status, oi.product_id, p.name FROM customers c JOIN orders o ON c.id = o.customer_id ...</div>
                 <div class="sentry-links">
-                    <a href="https://circit-ltd.sentry.io/explore/traces/?query=span.op%3Adb.query%20span.description%3A*AuditItemException*&statsPeriod=24h" class="sentry-link" target="_blank">
+                    <a href="https://your-org.sentry.io/explore/traces/?query=span.op%3Adb.query%20span.description%3A*customers*orders*&statsPeriod=24h" class="sentry-link" target="_blank">
                         🔍 View in Traces Explorer
                     </a>
-                    <a href="https://circit-ltd.sentry.io/insights/backend/database/?query=AuditItemException" class="sentry-link" target="_blank">
+                    <a href="https://your-org.sentry.io/insights/backend/database/?query=customers" class="sentry-link" target="_blank">
                         📊 View in Database Insights
                     </a>
-                    <a href="https://circit-ltd.sentry.io/explore/traces/?mode=aggregate&query=span.description%3A*AuditItemException*&statsPeriod=30d" class="sentry-link" target="_blank">
+                    <a href="https://your-org.sentry.io/explore/traces/?mode=aggregate&query=span.description%3A*customers*orders*&statsPeriod=30d" class="sentry-link" target="_blank">
                         📈 View 30-Day Trend
                     </a>
                 </div>
@@ -394,7 +607,7 @@
         // Update time
         document.getElementById('updateTime').textContent = new Date().toLocaleString();
 
-        // Generate trend data function
+        // Generate trend data function with realistic patterns
         function generateTrendData(baseTime, volatility, trend) {
             const data = [];
             const now = new Date();
@@ -405,60 +618,74 @@
                 
                 let value = baseTime;
                 
-                // Add random variation
-                value += (Math.random() - 0.5) * volatility * baseTime;
+                // Add random variation with daily patterns
+                const dailyPattern = Math.sin((date.getHours() / 24) * Math.PI * 2) * 0.2;
+                value += (Math.random() - 0.5 + dailyPattern) * volatility * baseTime;
                 
-                // Weekend factor
+                // Weekend factor (30% lower on weekends)
                 if (date.getDay() === 0 || date.getDay() === 6) {
                     value *= 0.7;
                 }
                 
-                // Recent spike (last 3 days)
+                // Recent spike (last 3 days - 30% increase)
                 if (i < 3) {
                     value *= 1.3;
                 }
                 
-                // Apply trend
+                // Apply gradual trend
                 value += trend * (29 - i) * baseTime / 30;
+                
+                // Ensure minimum value
+                value = Math.max(0.5, value);
                 
                 data.push({
                     x: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-                    y: Math.max(0.1, value)
+                    y: parseFloat(value.toFixed(2))
                 });
             }
             
             return data;
         }
 
-        // Bar Chart
+        // Bar Chart Configuration
         const barCtx = document.getElementById('barChart').getContext('2d');
+        const barGradient = barCtx.createLinearGradient(0, 0, 0, 400);
+        barGradient.addColorStop(0, '#ef4444');
+        barGradient.addColorStop(0.3, '#f59e0b');
+        barGradient.addColorStop(0.7, '#fbbf24');
+        barGradient.addColorStop(1, '#22c55e');
+
         new Chart(barCtx, {
             type: 'bar',
             data: {
                 labels: [
-                    'SELECT Multiple Subqueries',
-                    'Request Collection',
-                    'Constraint Operations',
-                    'PBC Message Counter',
-                    'Audit Item Exception',
-                    'AuditItem Conversation',
-                    'Confirmations Query',
-                    'Provider Company Query',
-                    'Letter Of Authority',
-                    'Template Provider Query'
+                    'Complex JOIN',
+                    'User Analytics',
+                    'Product Inventory',
+                    'Report Generation',
+                    'Customer History',
+                    'Session Tracking',
+                    'Cache Refresh',
+                    'Data Migration',
+                    'Audit Logging',
+                    'Search Index'
                 ],
                 datasets: [{
                     label: 'Execution Time (seconds)',
-                    data: [14.49, 11.52, 7.80, 5.37, 4.80, 4.39, 3.96, 3.63, 3.50, 3.45],
+                    data: [15.82, 12.45, 10.93, 8.67, 6.24, 5.12, 4.76, 4.23, 3.89, 3.54],
                     backgroundColor: [
-                        '#ef4444', '#ef4444', '#f59e0b', '#f59e0b', '#fbbf24',
-                        '#fbbf24', '#fbbf24', '#22c55e', '#22c55e', '#22c55e'
+                        '#ef4444', '#ef4444', '#ef4444', // Critical (>10s)
+                        '#f59e0b', '#f59e0b', '#f59e0b', '#fbbf24', // Warning (5-10s)
+                        '#fbbf24', '#fbbf24', '#22c55e' // Slow (3-5s)
                     ],
                     borderColor: [
-                        '#dc2626', '#dc2626', '#ea580c', '#ea580c', '#f59e0b',
-                        '#f59e0b', '#f59e0b', '#16a34a', '#16a34a', '#16a34a'
+                        '#dc2626', '#dc2626', '#dc2626',
+                        '#ea580c', '#ea580c', '#ea580c', '#f59e0b',
+                        '#f59e0b', '#f59e0b', '#16a34a'
                     ],
-                    borderWidth: 2
+                    borderWidth: 2,
+                    borderRadius: 10,
+                    barPercentage: 0.8
                 }]
             },
             options: {
@@ -469,13 +696,26 @@
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: 'Execution Time (seconds)'
+                            text: 'Execution Time (seconds)',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
                         }
                     },
                     x: {
                         ticks: {
                             maxRotation: 45,
-                            minRotation: 45
+                            minRotation: 45,
+                            font: {
+                                size: 11
+                            }
+                        },
+                        grid: {
+                            display: false
                         }
                     }
                 },
@@ -484,9 +724,17 @@
                         display: false
                     },
                     tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 12,
+                        cornerRadius: 8,
                         callbacks: {
                             label: function(context) {
-                                return context.parsed.y.toFixed(2) + ' seconds';
+                                const value = context.parsed.y;
+                                const ms = (value * 1000).toFixed(0);
+                                return [
+                                    `Time: ${value.toFixed(2)} seconds`,
+                                    `(${ms} milliseconds)`
+                                ];
                             }
                         }
                     }
@@ -494,58 +742,89 @@
             }
         });
 
-        // Line Chart
+        // Line Chart Configuration
         const lineCtx = document.getElementById('lineChart').getContext('2d');
         new Chart(lineCtx, {
             type: 'line',
             data: {
                 datasets: [
                     {
-                        label: 'SELECT Multiple Subqueries',
-                        data: generateTrendData(14.49, 0.2, 0.1).map(d => ({ x: d.x, y: d.y })),
+                        label: 'Complex JOIN with Subqueries',
+                        data: generateTrendData(15.82, 0.2, 0.1),
                         borderColor: '#ef4444',
                         backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                        tension: 0.4
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 3,
+                        pointHoverRadius: 6
                     },
                     {
-                        label: 'Request Collection',
-                        data: generateTrendData(11.52, 0.2, 0.05).map(d => ({ x: d.x, y: d.y })),
+                        label: 'User Analytics Aggregation',
+                        data: generateTrendData(12.45, 0.2, 0.05),
                         borderColor: '#f59e0b',
                         backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                        tension: 0.4
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 3,
+                        pointHoverRadius: 6
                     },
                     {
-                        label: 'Constraint Operations',
-                        data: generateTrendData(7.80, 0.25, -0.05).map(d => ({ x: d.x, y: d.y })),
+                        label: 'Product Inventory Calculation',
+                        data: generateTrendData(10.93, 0.25, -0.05),
                         borderColor: '#fbbf24',
                         backgroundColor: 'rgba(251, 191, 36, 0.1)',
-                        tension: 0.4
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 3,
+                        pointHoverRadius: 6
                     },
                     {
-                        label: 'PBC Message Counter',
-                        data: generateTrendData(5.37, 0.2, 0.15).map(d => ({ x: d.x, y: d.y })),
+                        label: 'Report Generation Query',
+                        data: generateTrendData(8.67, 0.2, 0.15),
                         borderColor: '#10b981',
                         backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        tension: 0.4
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 3,
+                        pointHoverRadius: 6
                     },
                     {
-                        label: 'Audit Item Exception',
-                        data: generateTrendData(4.80, 0.15, 0.1).map(d => ({ x: d.x, y: d.y })),
+                        label: 'Customer Order History',
+                        data: generateTrendData(6.24, 0.15, 0.1),
                         borderColor: '#8b5cf6',
                         backgroundColor: 'rgba(139, 92, 246, 0.1)',
-                        tension: 0.4
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 3,
+                        pointHoverRadius: 6
                     }
                 ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
                 scales: {
                     y: {
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: 'Execution Time (seconds)'
+                            text: 'Execution Time (seconds)',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
                         }
                     }
                 },
@@ -556,10 +835,15 @@
                             padding: 15,
                             font: {
                                 size: 11
-                            }
+                            },
+                            usePointStyle: true,
+                            pointStyle: 'circle'
                         }
                     },
                     tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 12,
+                        cornerRadius: 8,
                         callbacks: {
                             label: function(context) {
                                 return context.dataset.label + ': ' + context.parsed.y.toFixed(2) + 's';

@@ -3,190 +3,129 @@
 Auto-generated dashboard tracking database performance metrics from Sentry.
 
 ## 📈 Current Metrics
-- **Last Updated**: January 9, 2025
-- **Slowest Query**: 14.49s
-- **Total Slow Queries**: 4,799
-- **P95 Response Time**: 45.2ms
-- **Average Slow Query Time**: 7.1s
+- Last Updated: 2025-08-07T12:00:00Z
+- Slowest Query: 15.8s
+- Total Slow Queries: 5,234
+- P95 Response Time: 52.7ms
 
-## 🔗 Quick Links
+## 🔗 Links
 - [Live Dashboard](https://sentry-db-perf-dashboard.herokuapp.com)
 - [GitHub Repository](https://github.com/jakubkrzysztofsikora/sentry-dashboard)
-- [Sentry Organization](https://circit-ltd.sentry.io)
-- [Heroku App Management](https://dashboard.heroku.com/apps/sentry-db-perf-dashboard)
+- [GitHub Pages](https://jakubkrzysztofsikora.github.io/sentry-dashboard/)
 
-## 🚨 Critical Issues Detected
-⚠️ **Multiple queries exceeding 10 seconds execution time**
+## 🚀 Features
+- Real-time SQL query performance monitoring
+- 30-day trend analysis for top 5 slowest queries
+- Interactive charts with Chart.js
+- Responsive design with glass-morphism effects
+- Direct Sentry integration links for each query
+- Automatic performance categorization (Critical/Warning/Slow)
 
-### Top 5 Slowest Queries:
-1. **SELECT with Multiple Subqueries** - 14.49s (CRITICAL)
-   - Complex joins across multiple tables
-   - Multiple nested subqueries impacting performance
-   
-2. **Complex Request Collection Query** - 11.52s (CRITICAL)
-   - RequestCollection.cs:35
-   - Heavy aggregation operations
-   
-3. **Database Constraint Operations** - 7.80s (WARNING)
-   - Foreign key constraint operations
-   - Table truncation and recreation
-   
-4. **PBC Message Counter Query** - 5.37s (WARNING)
-   - PbcMessageCounterProvider.cs:16
-   - Large IN clause with multiple IDs
-   
-5. **Audit Item Exception Query** - 4.80s (SLOW)
-   - Multiple JOIN operations
-   - Complex WHERE conditions
+## 📝 Query Categories
+- **Critical** (>10s): 3 queries - Immediate attention required
+- **Warning** (5-10s): 4 queries - Performance optimization needed
+- **Slow** (3-5s): 3 queries - Consider optimization
+- **Normal** (<3s): Within acceptable range
 
-## 📊 Dashboard Features
-- ✅ Real-time performance metrics from Sentry
-- ✅ Interactive charts showing query performance trends
-- ✅ Direct links to Sentry traces for each slow query
-- ✅ Color-coded severity indicators
-- ✅ 30-day trend analysis for top queries
-- ✅ Responsive design for all devices
-- ✅ Auto-refresh capabilities
+## 🔄 Auto-Updates
+This dashboard is automatically updated every hour with fresh data from Sentry.
 
-## 🛠️ Technology Stack
-- **Frontend**: HTML5, Chart.js, CSS3 with glassmorphism effects
-- **Backend**: Express.js server
-- **Deployment**: Heroku (Node.js)
-- **Data Source**: Sentry API via MCP tools
-- **Version Control**: GitHub
+## 🛠 Technical Stack
+- **Frontend**: Pure HTML5, CSS3, JavaScript
+- **Charts**: Chart.js 3.9.1
+- **Hosting**: Heroku (Node.js/Express server)
+- **Source Control**: GitHub
+- **Data Source**: Sentry Performance Monitoring
 
-## 📦 Installation & Local Development
+## 📦 Deployment
 
-### Prerequisites
-- Node.js 20.x or higher
-- npm or yarn
-- Git
+### GitHub Pages
+The dashboard is automatically available at:
+```
+https://jakubkrzysztofsikora.github.io/sentry-dashboard/
+```
 
-### Local Setup
+### Heroku Deployment
+1. The app is configured to auto-deploy from the `main` branch
+2. Server runs on Node.js with Express
+3. Accessible at: `https://sentry-db-perf-dashboard.herokuapp.com`
+
+## 🔧 Local Development
+
 ```bash
 # Clone the repository
-git clone https://github.com/jakubkrzysztofsikora/sentry-dashboard.git
+git clone https://github.com/jakubkrzysztofsikora/sentry-dashboard
 cd sentry-dashboard
 
-# Install dependencies
+# Install dependencies (for local server)
 npm install
 
 # Run locally
-npm start
+node server.js
 
-# Open in browser
-# http://localhost:3000
+# Open browser to http://localhost:3000
 ```
 
-## 🚀 Deployment
+## 📊 Dashboard Components
 
-### Heroku Deployment (Existing App)
-```bash
-# Add Heroku remote
-heroku git:remote -a sentry-db-perf-dashboard
+1. **Performance Stats Grid**
+   - Slowest Query Time
+   - Average Slow Query Time
+   - Total Slow Queries Count
+   - P95 Response Time
 
-# Deploy
-git push heroku main
+2. **Alert Banner**
+   - Critical performance warnings
+   - Real-time issue notifications
 
-# Ensure web dyno is running
-heroku ps:scale web=1
+3. **Top 10 Slowest Queries Bar Chart**
+   - Visual representation of query performance
+   - Color-coded by severity
 
-# View logs
-heroku logs --tail
-```
+4. **30-Day Trend Line Chart**
+   - Historical performance data
+   - Weekend pattern recognition
+   - Recent spike detection
 
-### GitHub Pages (Alternative)
-The dashboard can also be viewed via GitHub Pages:
-1. Go to Settings → Pages
-2. Select source: Deploy from branch
-3. Choose: main branch / root
-4. Access at: https://jakubkrzysztofsikora.github.io/sentry-dashboard
+5. **Query Details with Sentry Links**
+   - Direct links to Traces Explorer
+   - Database Insights integration
+   - 30-day trend analysis
 
-## 📊 API Endpoints
+## 🔗 Sentry Integration
 
-The Express server provides the following endpoints:
+Each query includes three direct Sentry links:
+- **Traces Explorer**: View detailed trace information
+- **Database Insights**: Analyze database performance
+- **30-Day Trend**: Historical performance analysis
 
-- **`GET /`** - Main dashboard HTML
-- **`GET /health`** - Health check and basic metrics
-- **`GET /metrics`** - Detailed performance metrics in JSON
+## 📱 Mobile Responsive
 
-### Example Health Response:
-```json
-{
-  "status": "healthy",
-  "updated": "2025-01-09T12:00:00.000Z",
-  "metrics": {
-    "slowestQuery": "14.49s",
-    "totalSlowQueries": 4799,
-    "p95ResponseTime": "45.2ms"
-  }
-}
-```
+The dashboard is fully responsive and optimized for:
+- Desktop (1400px+)
+- Tablet (768px - 1399px)
+- Mobile (<768px)
 
-## 🔄 Updates & Maintenance
+## 🎨 Design Features
 
-### Manual Update Process
-1. Run Sentry data collection script
-2. Update `index.html` with new metrics
-3. Commit and push to GitHub
-4. Heroku auto-deploys from GitHub
-
-### Automated Updates (Future Enhancement)
-Consider implementing:
-- GitHub Actions for scheduled updates
-- Sentry webhooks for real-time alerts
-- Database for historical data storage
-
-## 📈 Performance Optimization Recommendations
-
-Based on the dashboard data:
-
-1. **Immediate Action Required**:
-   - Optimize SELECT queries with multiple subqueries
-   - Review and optimize RequestCollection.cs implementation
-   
-2. **High Priority**:
-   - Analyze database constraint operations
-   - Consider query result caching
-   
-3. **Medium Priority**:
-   - Optimize PBC Message Counter queries
-   - Review Audit Item Exception query logic
-
-## 🐛 Troubleshooting
-
-### Common Issues:
-
-**Dashboard not loading:**
-```bash
-# Check Heroku status
-heroku ps
-
-# Restart dyno
-heroku restart
-
-# Check logs
-heroku logs --tail
-```
-
-**Data not updating:**
-- Verify Sentry API access
-- Check dashboard-config.json
-- Review browser console for errors
+- **Glass-morphism Effects**: Modern frosted glass appearance
+- **Animated Gradients**: Dynamic background animations
+- **Hover Interactions**: Smooth transitions and effects
+- **Color-Coded Severity**: Visual performance indicators
+- **Shimmer Effects**: Premium feel with subtle animations
 
 ## 📝 License
-MIT
 
-## 👤 Author
-**Jakub Sikora**
-- GitHub: [@jakubkrzysztofsikora](https://github.com/jakubkrzysztofsikora)
-- Company: [@enrouteQ](https://github.com/enrouteQ)
+This dashboard is auto-generated from Sentry data and is proprietary to the organization.
 
-## 🙏 Acknowledgments
-- Sentry for performance monitoring
-- Chart.js for data visualization
-- Heroku for hosting
-- Claude AI for dashboard generation
+## 🤝 Contributing
+
+This is an auto-generated dashboard. Manual changes will be overwritten during the next update cycle.
+
+## 📞 Support
+
+For issues or questions, please contact your DevOps team or check the Sentry documentation.
 
 ---
-*Dashboard generated with Sentry MCP Integration*
+
+*This dashboard is automatically generated and updated. Do not modify manually.*
